@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Real Paths</string>
+    <string name="image">Image</string>
+    <string name="video">Video</string>
+    <string name="original_uri">Original Uri</string>
+    <string name="real_path">Real Path</string>
+</resources>
