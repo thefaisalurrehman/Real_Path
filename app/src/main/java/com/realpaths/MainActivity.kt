@@ -14,11 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.realpath.IPickedCallback
+import com.realpath.PathPickerCallback
 import com.realpath.RealPather
 import com.realpaths.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), IPickedCallback {
+class MainActivity : AppCompatActivity(), PathPickerCallback {
 
     companion object {
         const val REQ_ID_WRITE_EXTERNAL_STORAGE = 493

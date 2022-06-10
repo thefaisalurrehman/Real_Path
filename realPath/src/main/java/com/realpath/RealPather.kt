@@ -17,7 +17,7 @@ import com.realpath.Utils.getRealPathFromURI_API19
 import java.io.File
 import java.util.*
 
-class RealPather(private val context: Context, private val pickiTCallbacks: IPickedCallback) :
+class RealPather(private val context: Context, private val uriPickerCallBack: PathPickerCallback) :
     TaskCallBack {
     private var isDriveFile = false
     private var isMsfDownload = false
@@ -38,7 +38,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
             getPath(imageUri, Build.VERSION.SDK_INT)
         }
         if (!isDriveFile) {
-            pickiTCallbacks.pickedMultipleCompleteListener(multipleUris, multiplePaths, true, "")
+            uriPickerCallBack.pickedMultipleCompleteListener(multipleUris, multiplePaths, true, "")
             multiplePaths.clear()
             wasMultipleFileSelected = false
             wasUriReturnedCalledBefore = false
@@ -71,7 +71,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                     // If the file exists in the Downloads directory
                     // we can return the path directly
                     if (file.exists()) {
-                        pickiTCallbacks.pickedCompleteListener(
+                        uriPickerCallBack.pickedCompleteListener(
                             uri,
                             file.absolutePath,
                             wasDriveFile = false,
@@ -90,7 +90,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                                 val mediaFile = "/proc/$pid/fd/$fd"
                                 val file1 = File(mediaFile)
                                 if (file1.exists() && file1.canRead() && file1.canWrite()) {
-                                    pickiTCallbacks.pickedCompleteListener(
+                                    uriPickerCallBack.pickedCompleteListener(
                                         uri,
                                         file1.absolutePath,
                                         wasDriveFile = false,
@@ -161,7 +161,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                         }
                     }
                     //Else an error occurred, get/set the reason for the error
-                    pickiTCallbacks.pickedCompleteListener(
+                    uriPickerCallBack.pickedCompleteListener(
                         uri,
                         returnedPath,
                         wasDriveFile = false,
@@ -184,7 +184,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                         try {
                             val checkIfExist = File(returnedPath)
                             if (checkIfExist.exists()) {
-                                pickiTCallbacks.pickedCompleteListener(
+                                uriPickerCallBack.pickedCompleteListener(
                                     uri,
                                     returnedPath,
                                     wasDriveFile = false,
@@ -206,7 +206,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                     if (wasMultipleFileSelected) {
                         multiplePaths.add(returnedPath)
                     } else {
-                        pickiTCallbacks.pickedCompleteListener(
+                        uriPickerCallBack.pickedCompleteListener(
                             uri,
                             returnedPath,
                             wasDriveFile = false,
@@ -284,11 +284,11 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
     override fun realPatherOnUriReturned() {
         if (wasMultipleFileSelected) {
             if (!wasUriReturnedCalledBefore) {
-                pickiTCallbacks.pickedUriReturned()
+                uriPickerCallBack.pickedUriReturned()
                 wasUriReturnedCalledBefore = true
             }
         } else {
-            pickiTCallbacks.pickedUriReturned()
+            uriPickerCallBack.pickedUriReturned()
         }
     }
 
@@ -297,15 +297,15 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
         if (wasMultipleFileSelected || isMsfDownload) {
             if (!wasPreExecuteCalledBefore) {
                 wasPreExecuteCalledBefore = true
-                pickiTCallbacks.pickedUriReturned()
+                uriPickerCallBack.pickedUriReturned()
             }
         } else {
-            pickiTCallbacks.pickedUriReturned()
+            uriPickerCallBack.pickedUriReturned()
         }
     }
 
     override fun realPatherOnProgressUpdate(progress: Int, isLess: Boolean) {
-        pickiTCallbacks.pickedProgressUpdate(progress,isLess)
+        uriPickerCallBack.pickedProgressUpdate(progress, isLess)
     }
 
     override fun realPatherOnPostExecute(
@@ -327,7 +327,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                 if (driveCountRef == countMultiple) {
                     wasPreExecuteCalledBefore = false
                     wasUriReturnedCalledBefore = false
-                    pickiTCallbacks.pickedMultipleCompleteListener(
+                    uriPickerCallBack.pickedMultipleCompleteListener(
                         multipleUris,
                         multiplePaths,
                         true,
@@ -340,7 +340,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                 }
             } else {
                 if (isDriveFile) {
-                    pickiTCallbacks.pickedCompleteListener(
+                    uriPickerCallBack.pickedCompleteListener(
                         uri, path,
                         wasDriveFile = true,
                         wasUnknownProvider = false,
@@ -348,7 +348,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                         error = ""
                     )
                 } else if (isFromUnknownProvider) {
-                    pickiTCallbacks.pickedCompleteListener(
+                    uriPickerCallBack.pickedCompleteListener(
                         uri, path,
                         wasDriveFile = false,
                         wasUnknownProvider = true,
@@ -356,7 +356,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                         error = ""
                     )
                 } else if (isMsfDownload) {
-                    pickiTCallbacks.pickedCompleteListener(
+                    uriPickerCallBack.pickedCompleteListener(
                         uri, path,
                         wasDriveFile = false,
                         wasUnknownProvider = true,
@@ -367,7 +367,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
             }
         } else {
             if (isDriveFile) {
-                pickiTCallbacks.pickedCompleteListener(
+                uriPickerCallBack.pickedCompleteListener(
                     uri, path,
                     wasDriveFile = true,
                     wasUnknownProvider = false,
@@ -375,7 +375,7 @@ class RealPather(private val context: Context, private val pickiTCallbacks: IPic
                     error = reason
                 )
             } else if (isFromUnknownProvider) {
-                pickiTCallbacks.pickedCompleteListener(
+                uriPickerCallBack.pickedCompleteListener(
                     uri, path,
                     wasDriveFile = false,
                     wasUnknownProvider = true,

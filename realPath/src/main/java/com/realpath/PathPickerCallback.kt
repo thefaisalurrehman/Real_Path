@@ -2,7 +2,7 @@ package com.realpath
 
 import android.net.Uri
 
-interface IPickedCallback {
+interface PathPickerCallback {
 
     fun pickedUriReturned()
     fun pickedStartListener()
